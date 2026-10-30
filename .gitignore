@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# uv
+# uv.lock is committed for apps; uncomment to ignore it for libraries
+# uv.lock
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store

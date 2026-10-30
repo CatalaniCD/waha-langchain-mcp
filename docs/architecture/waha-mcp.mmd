@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph Agent["LangChain process (Python)"]
+        A["ReAct agent<br/>create_react_agent"]
+        D["Deep agent<br/>create_deep_agent"]
+        MCPC["MCP client<br/>langchain-mcp-adapters"]
+        A -->|"tools"| MCPC
+        D -->|"tools"| MCPC
+    end
+
+    subgraph Server["waha-mcp process (stdio)"]
+        T["MCP tools<br/>FastMCP"]
+        C["WahaClient<br/>httpx.AsyncClient"]
+        T -->|"call method"| C
+    end
+
+    subgraph Ext["External systems"]
+        W["WAHA REST API<br/>localhost:3000"]
+        WA["WhatsApp"]
+        LLM["LLM provider<br/>OpenRouter/OpenAI"]
+    end
+
+    MCPC -->|"JSON-RPC over stdio"| T
+    C -->|"HTTP + X-Api-Key"| W
+    W <-->|"session1 (WEBJS)"| WA
+    A -.->|"inference"| LLM
+    D -.->|"inference"| LLM
+    ENV["env: WAHA_BASE_URL<br/>WAHA_API_KEY"] -.->|"config"| C
