@@ -1,0 +1,27 @@
+flowchart LR
+    subgraph Agent["LangChain process (trusted, local)"]
+        A["ReAct agent"]
+        D["Deep agent"]
+        MCPC["MCP client"]
+        LLM["LLM provider"]
+        A -->|"tool calls"| MCPC
+        D -->|"tool calls"| MCPC
+        A -.->|"inference"| LLM
+        D -.->|"inference"| LLM
+    end
+
+    subgraph Server["waha-langchain-mcp process (stdio)"]
+        T["MCP tools"]
+        C["WahaClient"]
+        T -->|"typed methods"| C
+    end
+
+    subgraph Ext["Local / external systems"]
+        W["WAHA REST API<br/>localhost:3000"]
+        WA["WhatsApp"]
+    end
+
+    MCPC -->|"JSON-RPC over stdio"| T
+    C -->|"HTTP + X-Api-Key"| W
+    W <-->|"session1 (WEBJS)"| WA
+    ENV["env: WAHA_BASE_URL<br/>WAHA_API_KEY"] -.->|"config"| C

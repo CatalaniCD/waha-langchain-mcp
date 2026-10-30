@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant A as LangChain agent
+    participant M as MCP client
+    participant S as waha-mcp server
+    participant W as WAHA REST API
+    participant X as WhatsApp
+
+    U->>A: "Send 'hello' to chat X"
+    A->>A: Resolve chat_id from tool output
+    A->>M: call waha_send_text
+    M->>S: JSON-RPC tools/call (stdio)
+    S->>W: POST /api/sendText + X-Api-Key
+    W->>X: Deliver message
+    X-->>W: Message ACK
+    W-->>S: 200 message object
+    S-->>M: Compact JSON result
+    M-->>A: Tool result
+    A-->>U: Confirmation with message id
+
+    alt WAHA unreachable or 4xx/5xx
+        W-->>S: Error response
+        S-->>M: Tool error (status + body)
+        M-->>A: Tool exception
+        A-->>U: Report failure, no retry without consent
+    end

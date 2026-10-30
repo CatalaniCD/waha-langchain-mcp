@@ -1,0 +1,25 @@
+flowchart TD
+    subgraph Loop["Agent loop — each stage commits an artifact"]
+        I["intent.md<br/>problem + outcome"]
+        D["design.md<br/>boundaries + decisions"]
+        S["spec.md<br/>requirements + acceptance"]
+        P["plan.md<br/>ordered, verifiable steps"]
+        B["code + tests<br/>plan → review"]
+        R["review.md<br/>findings + severity"]
+        M["maintenance<br/>incident → intent.md"]
+        I --> D --> S --> P --> B --> R
+        R -->|"merge"| M
+        M -->|"new intent"| I
+    end
+
+    subgraph Humans["Above the loop — judgment and gates"]
+        H1["Accept intent"]
+        H2["Approve design/spec"]
+        H3["Release authorization"]
+        H4["Triage incidents"]
+    end
+
+    H1 -.->|"gate"| I
+    H2 -.->|"gate"| P
+    H3 -.->|"gate"| R
+    H4 -.->|"gate"| M
